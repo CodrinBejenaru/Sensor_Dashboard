@@ -1,5 +1,5 @@
 
-const sheetURL = 'https://docs.google.com/spreadsheets/d/1lWBKeNHYP2JXU_KINpevxeBvwWkAzG9HhWpx3ktGgSc/export?format=csv&gid=0';
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSNhRMWHHp9Ddpsv8Vsny9sYgp_LF7sC-_xz84mLfbtedMMyDwAhXtL8TNYm4szMpwe-II-eY6gkGzI/pubhtml?gid=0&single=true';
 
 async function fetchCSV() {
   const response = await fetch(sheetURL);
