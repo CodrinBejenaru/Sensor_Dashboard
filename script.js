@@ -20,13 +20,12 @@ function formatDate(dateString) {
 function parseCSV(csv) {
   const [header, ...rows] = csv.trim().split('\n').map(row => row.split(','));
 
-  // Reverse if newest rows are on top
-  const ordered = rows.reverse(); // <-- assume newest first
-  const last50 = ordered.slice(0, 50).reverse();
+  // Get the first 25 rows (most recent at top), reverse to oldest ➜ newest
+  const newest25 = rows.slice(0, 25).reverse();
 
-  const labels = last50.map(r => formatDate(r[0]));
+  const labels = newest25.map(r => formatDate(r[0]));
   const sensors = header.slice(1);
-  const datasets = sensors.map((_, i) => last50.map(r => parseFloat(r[i + 1])));
+  const datasets = sensors.map((_, i) => newest25.map(r => parseFloat(r[i + 1])));
   return { labels, sensors, datasets };
 }
 
