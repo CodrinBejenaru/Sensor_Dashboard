@@ -20,9 +20,11 @@ function formatDate(dateString) {
 function parseCSV(csv) {
   const [header, ...rows] = csv.trim().split('\n').map(row => row.split(','));
 
-  const labels = rows.map(r => formatDate(r[0]));
+  const last50 = rows.slice(-50); // Keep only the last 50 rows
+
+  const labels = last50.map(r => formatDate(r[0]));
   const sensors = header.slice(1);
-  const datasets = sensors.map((_, i) => rows.map(r => parseFloat(r[i + 1])));
+  const datasets = sensors.map((_, i) => last50.map(r => parseFloat(r[i + 1])));
   return { labels, sensors, datasets };
 }
 
@@ -50,8 +52,8 @@ function createCharts(data) {
           title: {
             display: true,
             text: sensor,
-            font: { size: 18 },
-            color: '#f0f0f0'
+            font: { size: 32 }, // Matches page title (h1)
+            color: '#00f5ff'
           },
           legend: {
             display: false
@@ -85,3 +87,4 @@ function createCharts(data) {
 }
 
 fetchCSV().then(createCharts).catch(console.error);
+
