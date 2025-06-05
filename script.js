@@ -1,16 +1,26 @@
-// Paste your public Google Sheets CSV URL below:
 const sheetURL = 'https://docs.google.com/spreadsheets/d/1lWBKeNHYP2JXU_KINpevxeBvwWkAzG9HhWpx3ktGgSc/export?format=csv&gid=0';
 
 async function fetchCSV() {
   const response = await fetch(sheetURL);
   const data = await response.text();
-  console.log(data);
   return parseCSV(data);
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const hours = date.getHours().toString().padStart(2, '0');
+  const mins = date.getMinutes().toString().padStart(2, '0');
+  const secs = date.getSeconds().toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const monthName = date.toLocaleString('en-US', { month: 'long' });
+  const year = date.getFullYear().toString().slice(-2);
+  return `${hours}:${mins}:${secs} ${day}/${monthName}/${year}`;
 }
 
 function parseCSV(csv) {
   const [header, ...rows] = csv.trim().split('\n').map(row => row.split(','));
-  const labels = rows.map(r => r[0]);
+
+  const labels = rows.map(r => formatDate(r[0]));
   const sensors = header.slice(1);
   const datasets = sensors.map((_, i) => rows.map(r => parseFloat(r[i + 1])));
   return { labels, sensors, datasets };
@@ -33,6 +43,42 @@ function createCharts(data) {
           borderColor: 'rgba(75,192,192,1)',
           tension: 0.1
         }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: sensor,
+            font: { size: 18 },
+            color: '#f0f0f0'
+          },
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Time",
+              color: '#ccc'
+            },
+            ticks: {
+              color: '#aaa'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: sensor,
+              color: '#ccc'
+            },
+            ticks: {
+              color: '#aaa'
+            }
+          }
+        }
       }
     });
   });
