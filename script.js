@@ -55,7 +55,7 @@ function createCharts(data) {
           title: {
             display: true,
             text: sensor,
-            font: { size: 32 }, // Matches page title (h1)
+            font: { size: 50 }, // Matches page title (h1)
             color: '#00f5ff'
           },
           legend: {
