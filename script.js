@@ -6,21 +6,20 @@ async function fetchCSV() {
   return parseCSV(data);
 }
 
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const hours = date.getHours().toString().padStart(2, '0');
-  const mins = date.getMinutes().toString().padStart(2, '0');
-  const secs = date.getSeconds().toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const monthName = date.toLocaleString('en-US', { month: 'long' });
-  const year = date.getFullYear().toString().slice(-2);
-  return `${hours}:${mins}:${secs} ${day}/${monthName}/${year}`;
+// Parse DD/MM/YYYY HH:MM:SS
+function formatDate(dmyHMS) {
+  const [datePart, timePart] = dmyHMS.split(' ');
+  const [day, month, year] = datePart.split('/');
+  const [hour, min, sec] = timePart.split(':');
+  const jsDate = new Date(`${year}-${month}-${day}T${hour}:${min}:${sec}`);
+  const monthName = jsDate.toLocaleString('en-US', { month: 'long' });
+  return `${hour}:${min}:${sec} ${day}/${monthName}/${year.slice(-2)}`;
 }
 
 function parseCSV(csv) {
   const [header, ...rows] = csv.trim().split('\n').map(row => row.split(','));
 
-  // Get the first 25 rows (most recent at top), reverse to oldest ➜ newest
+  // Take first 25 rows (newest), then reverse to keep chronological order
   const newest25 = rows.slice(0, 25).reverse();
 
   const labels = newest25.map(r => formatDate(r[0]));
@@ -29,13 +28,13 @@ function parseCSV(csv) {
   return { labels, sensors, datasets };
 }
 
-
 function createCharts(data) {
   const container = document.getElementById('charts');
   container.innerHTML = '';
   data.sensors.forEach((sensor, i) => {
     const canvas = document.createElement('canvas');
     container.appendChild(canvas);
+
     new Chart(canvas.getContext('2d'), {
       type: 'line',
       data: {
@@ -54,7 +53,10 @@ function createCharts(data) {
           title: {
             display: true,
             text: sensor,
-            font: { size: 50 }, // Matches page title (h1)
+            font: {
+              size: 32,
+              weight: 'bold'
+            },
             color: '#00f5ff'
           },
           legend: {
@@ -69,7 +71,12 @@ function createCharts(data) {
               color: '#ccc'
             },
             ticks: {
-              color: '#aaa'
+              color: '#aaa',
+              autoSkip: false,
+              maxRotation: 60,
+              callback: function (_, index) {
+                return index % 5 === 0 ? this.getLabelForValue(index) : '';
+              }
             }
           },
           y: {
@@ -89,4 +96,5 @@ function createCharts(data) {
 }
 
 fetchCSV().then(createCharts).catch(console.error);
+
 
