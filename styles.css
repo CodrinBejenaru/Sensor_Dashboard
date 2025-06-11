@@ -1,0 +1,67 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  padding: 20px;
+  margin: 0;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 coloane fixe pe desktop */
+  gap: 20px;
+  justify-content: center;
+}
+
+.chart-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  /* facem mai mare pe desktop */
+  min-height: 400px;
+}
+
+.chart-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.btn {
+    font-size: 1.3rem;
+    background-color: #9de0ed;
+}
+
+.spacing {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Responsive: pe telefon → 1 coloana + container flexibil */
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr; /* pe telefon → un element pe rând */
+  }
+
+  .chart-container {
+    aspect-ratio: auto;
+    height: auto;
+    min-height: 300px;
+  }
+}
